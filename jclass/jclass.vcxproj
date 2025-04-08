@@ -105,7 +105,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)\jclasscore\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\jclasscore\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -128,7 +128,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
       <StringPooling>true</StringPooling>
-      <AdditionalIncludeDirectories>$(ProjectDir)\jclasscore\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\jclasscore\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,7 +149,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(ProjectDir)\jclasscore\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\jclasscore\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -173,7 +173,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
       <StringPooling>true</StringPooling>
-      <AdditionalIncludeDirectories>$(ProjectDir)\jclasscore\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\jclasscore\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -185,28 +185,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\jclasscore\Error.hpp" />
+    <ClInclude Include="..\jclasscore\JavaClass.hpp" />
+    <ClInclude Include="..\jclasscore\JavaClassParser.hpp" />
+    <ClInclude Include="..\jclasscore\JavaHelper.hpp" />
+    <ClInclude Include="..\jclasscore\JavaIterator.hpp" />
+    <ClInclude Include="..\jclasscore\JavaParserText.hpp" />
+    <ClInclude Include="..\jclasscore\JavaStruct.hpp" />
     <ClInclude Include="cWindow.h" />
     <ClInclude Include="cWlxWindow.h" />
-    <ClInclude Include="jclasscore\Error.hpp" />
-    <ClInclude Include="jclasscore\JavaClass.hpp" />
-    <ClInclude Include="jclasscore\JavaClassParser.hpp" />
-    <ClInclude Include="jclasscore\JavaHelper.hpp" />
-    <ClInclude Include="jclasscore\JavaIterator.hpp" />
-    <ClInclude Include="jclasscore\JavaParserText.hpp" />
-    <ClInclude Include="jclasscore\JavaStruct.hpp" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="wlx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\jclasscore\JavaClass.cpp" />
+    <ClCompile Include="..\jclasscore\JavaClassParser.cpp" />
+    <ClCompile Include="..\jclasscore\JavaHelper.cpp" />
+    <ClCompile Include="..\jclasscore\JavaIterator.cpp" />
+    <ClCompile Include="..\jclasscore\JavaParserText.cpp" />
+    <ClCompile Include="..\jclasscore\JavaStruct.cpp" />
     <ClCompile Include="cWindow.cpp" />
     <ClCompile Include="cWlxWindow.cpp" />
-    <ClCompile Include="jclasscore\JavaClass.cpp" />
-    <ClCompile Include="jclasscore\JavaClassParser.cpp" />
-    <ClCompile Include="jclasscore\JavaHelper.cpp" />
-    <ClCompile Include="jclasscore\JavaIterator.cpp" />
-    <ClCompile Include="jclasscore\JavaParserText.cpp" />
-    <ClCompile Include="jclasscore\JavaStruct.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="wlx.cpp" />
   </ItemGroup>
