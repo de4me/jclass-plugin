@@ -138,41 +138,89 @@ enum TYPETAG: uint8_t {
     TYPETAG_CLASS = 'c',
     TYPETAG_INTERFACE = '@',
     TYPETAG_ARRAY = '[',
-    TYPETAG_REFERENCE = 'L',
+    TYPETAG_REFERENCE  = 'L',
 };
 
 
-enum ACCESSFLAG {
+enum DESCRIPTIONTAG: uint8_t {
     
-    ACCESSFLAG_PUBLIC  = 0x0001,
-    ACCESSFLAG_PRIVATE  = 0x0002,
-    ACCESSFLAG_PROTECTED = 0x0004,
-    ACCESSFLAG_STATIC = 0x0008,
-    ACCESSFLAG_FINAL = 0x0010,
-    ACCESSFLAG_SYNCHRONIZED = 0x0020,
-    ACCESSFLAG_BRIDGE = 0x0040,
-    ACCESSFLAG_VARARGS = 0x0080,
-    ACCESSFLAG_NATIVE = 0x0100,
-    ACCESSFLAG_ABSTRACT = 0x0400,
-    ACCESSFLAG_STRICT = 0x0800,
-    ACCESSFLAG_SYNTHETIC = 0x1000,
+    DESCRIPTIONTAG_REFERENCE_BEGIN = TYPETAG_REFERENCE,
+    DESCRIPTIONTAG_REFERENCE_END = ';',
+    DESCRIPTIONTAG_PARAMETER_BEGIN = '(',
+    DESCRIPTIONTAG_PARAMETER_END = ')',
+    DESCRIPTIONTAG_ENUM_BEGIN = '<',
+    DESCRIPTIONTAG_ENUM_END = '>',
 };
 
 
-enum CLASSACCESSFLAG {
+enum ACCFLAG {
     
-    CLASSACCESSFLAG_PUBLIC  = 0x0001,
-    CLASSACCESSFLAG_PRIVATE  = 0x0002,
-    CLASSACCESSFLAG_PROTECTED = 0x0004,
-    CLASSACCESSFLAG_STATIC = 0x0008,
-    CLASSACCESSFLAG_FINAL = 0x0010,
-    CLASSACCESSFLAG_SUPER = 0x0020,
-    CLASSACCESSFLAG_INTERFACE = 0x0200,
-    CLASSACCESSFLAG_ABSTRACT = 0x0400,
-    CLASSACCESSFLAG_SYNTHETIC = 0x1000,
-    CLASSACCESSFLAG_ANNOTATION = 0x2000,
-    CLASSACCESSFLAG_ENUM = 0x4000,
-    CLASSACCESSFLAG_MODULE = 0x1000,
+    ACCFLAG_PUBLIC  = 0x0001,
+    ACCFLAG_PRIVATE  = 0x0002,
+    ACCFLAG_PROTECTED = 0x0004,
+    ACCFLAG_STATIC = 0x0008,
+    ACCFLAG_FINAL = 0x0010,
+    ACCFLAG_SUPER = 0x0020,
+    ACCFLAG_INTERFACE = 0x0200,
+    ACCFLAG_ABSTRACT = 0x0400,
+    ACCFLAG_SYNTHETIC = 0x1000,
+    ACCFLAG_ANNOTATION = 0x2000,
+    ACCFLAG_ENUM = 0x4000,
+    ACCFLAG_MODULE = 0x8000,
+};
+
+
+enum ACCFLAG_FIELD {
+    
+    ACCFLAG_FIELD_PUBLIC = 0x0001,
+    ACCFLAG_FIELD_PRIVATE = 0x0002,
+    ACCFLAG_FIELD_PROTECTED =0x0004,
+    ACCFLAG_FIELD_STATIC = 0x0008,
+    ACCFLAG_FIELD_FINAL = 0x0010,
+    ACCFLAG_FIELD_VOLATILE = 0x0040,
+    ACCFLAG_FIELD_TRANSIENT = 0x0080,
+    ACCFLAG_FIELD_SYNTHETIC = 0x1000,
+    ACCFLAG_FIELD_ENUM = 0x4000,
+};
+
+
+enum ACCFLAG_METHOD {
+    
+    ACCFLAG_METHOD_PUBLIC = 0x0001,
+    ACCFLAG_METHOD_PRIVATE = 0x0002,
+    ACCFLAG_METHOD_PROTECTED = 0x0004,
+    ACCFLAG_METHOD_STATIC = 0x0008,
+    ACCFLAG_METHOD_FINAL = 0x0010,
+    ACCFLAG_METHOD_SYNCHRONIZED = 0x0020,
+    ACCFLAG_METHOD_BRIDGE = 0x0040,
+    ACCFLAG_METHOD_VARARGS = 0x0080,
+    ACCFLAG_METHOD_NATIVE = 0x0100,
+    ACCFLAG_METHOD_ABSTRACT = 0x0400,
+    ACCFLAG_METHOD_STRICT = 0x0800,
+    ACCFLAG_METHOD_SYNTHETIC = 0x1000,
+};
+
+
+enum ACCFLAG_INNERCLASS {
+    
+    ACCFLAG_INNERCLASS_PUBLIC  = 0x0001,
+    ACCFLAG_INNERCLASS_PRIVATE = 0x0002,
+    ACCFLAG_INNERCLASS_PROTECTED = 0x0004,
+    ACCFLAG_INNERCLASS_STATIC = 0x0008,
+    ACCFLAG_INNERCLASS_FINAL = 0x0010,
+    ACCFLAG_INNERCLASS_INTERFACE = 0x0200,
+    ACCFLAG_INNERCLASS_ABSTRACT = 0x0400,
+    ACCFLAG_INNERCLASS_SYNTHETIC = 0x1000,
+    ACCFLAG_INNERCLASS_ANNOTATION = 0x2000,
+    ACCFLAG_INNERCLASS_ENUM = 0x4000,
+};
+
+
+enum ACCFLAG_METHODPARAMETER {
+    
+    ACCFLAG_METHODPARAMETER_FINAL = 0x0010,
+    ACCFLAG_METHODPARAMETER_SYNTHETIC = 0x1000,
+    ACCFLAG_METHODPARAMETER_MANDATED = 0x8000,
 };
 
 
@@ -485,7 +533,7 @@ struct JavaClassInnerClassInfo {
     uint16_t inner_class_info_index() const {return BYTESWAP16(_inner_class_info_index); }
     uint16_t outer_class_info_index() const {return BYTESWAP16(_outer_class_info_index); }
     uint16_t inner_name_index() const {return BYTESWAP16(_inner_name_index); }
-    CLASSACCESSFLAG inner_class_access_flags() const { return static_cast<CLASSACCESSFLAG>(BYTESWAP16(_inner_class_access_flags)); }
+    ACCFLAG_INNERCLASS inner_class_access_flags() const { return static_cast<ACCFLAG_INNERCLASS>(BYTESWAP16(_inner_class_access_flags)); }
 };
 
 
@@ -578,7 +626,7 @@ struct JavaClassField {
     uint16_t _attributes_count;
     JavaClassAttribute attribute[];
     
-    ACCESSFLAG access_flag() const { return static_cast<ACCESSFLAG>( BYTESWAP16(_access_flag) ); }
+    ACCFLAG_FIELD access_flag() const { return static_cast<ACCFLAG_FIELD>( BYTESWAP16(_access_flag) ); }
     uint16_t name_index() const { return BYTESWAP16(_name_index); }
     uint16_t descriptor_index() const { return BYTESWAP16(_descriptor_index); }
     uint16_t attributes_count() const { return BYTESWAP16(_attributes_count); }
@@ -589,7 +637,23 @@ struct JavaClassField {
 };
 
 
-typedef JavaClassField JavaClassMethod;
+struct JavaClassMethod {
+    
+    uint16_t _access_flag;
+    uint16_t _name_index;
+    uint16_t _descriptor_index;
+    uint16_t _attributes_count;
+    JavaClassAttribute attribute[];
+    
+    ACCFLAG_METHOD access_flag() const { return static_cast<ACCFLAG_METHOD>( BYTESWAP16(_access_flag) ); }
+    uint16_t name_index() const { return BYTESWAP16(_name_index); }
+    uint16_t descriptor_index() const { return BYTESWAP16(_descriptor_index); }
+    uint16_t attributes_count() const { return BYTESWAP16(_attributes_count); }
+    
+    size_t sizeOfStruct() const;
+    
+    AttributeIterator attributeIterator() const;
+};
 
 
 #pragma pack (pop)

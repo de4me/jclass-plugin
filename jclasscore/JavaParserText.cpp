@@ -20,7 +20,7 @@ void JavaParserText::parseHeader(JavaClass &java) {
     if( !source_file.empty() ){
         _buffer << format("{:26} : {}\r\n", "Source File", source_file);
     }
-    auto access_flags = JavaHelperClassAccessFlags(java.accessFlags());
+    auto access_flags = JavaHelperAccessFlags(java.accessFlags());
     _buffer << format("{:26} : {}\r\n", "Access Flags", access_flags);
     auto this_name = java.nameAtIndex(java.thisClass());
     _buffer << format("{:26} : {}\r\n", "This Class", this_name);
@@ -73,8 +73,9 @@ void JavaParserText::parsePool(JavaClass &java, const JavaClassPool *pool, uint1
             
         case POOLTAG_CLASS:
         {
-            auto desc = java.nameAtIndex(pool->class_info.name_index());
-            auto name = JavaHelperTypeName(desc);
+            auto text = java.nameAtIndex(pool->class_info.name_index());
+            auto description = JavaTypeDescription(text);
+            auto name = description.str();
             _buffer << format("{:5}: {}: {}\r\n", index, name, tag_name);
             break;
         }
@@ -109,7 +110,7 @@ void JavaParserText::parsePool(JavaClass &java, const JavaClassPool *pool, uint1
             
         case POOLTAG_NAMEANDTYPE:
         {
-            auto name = JavaHelperFieldNameAndType(java, pool);
+            auto name = JavaHelperNameAndType(java, pool);
             _buffer << format("{:5}: {}\r\n", index, name);
             break;
         }
@@ -151,8 +152,10 @@ void JavaParserText::parsePool(JavaClass &java, const JavaClassPool *pool, uint1
             
         case POOLTAG_METHODTYPE:
         {
-            auto desc = java.nameAtIndex(pool->method_type_info.descriptor_index());
-            auto type_name = JavaHelperMethodTypeName(desc);
+            auto text = java.nameAtIndex(pool->method_type_info.descriptor_index());
+            auto description = JavaTypeDescription(text);
+            auto type_name = description.str();
+            
             _buffer << format("{:5}: {}\r\n", index, type_name);
             break;
         }
@@ -161,7 +164,7 @@ void JavaParserText::parsePool(JavaClass &java, const JavaClassPool *pool, uint1
         case POOLTAG_INVOKEDYNAMIC:
         {
             auto name_and_type = java.poolAtIndex(pool->dynamic_info.name_and_type_index());
-            auto name = JavaHelperFieldNameAndType(java, name_and_type);
+            auto name = JavaHelperNameAndType(java, name_and_type);
             _buffer << format("{:5}: {} {}\r\n", index, tag_name, name);
             break;
         }

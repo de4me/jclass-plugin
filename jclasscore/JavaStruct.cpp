@@ -31,6 +31,21 @@ size_t JavaClassField::sizeOfStruct() const {
 }
 
 
+AttributeIterator JavaClassMethod::attributeIterator() const {
+    
+    return AttributeIterator(attributes_count(), &attribute[0]);
+}
+
+
+size_t JavaClassMethod::sizeOfStruct() const {
+    
+    auto iter = attributeIterator();
+    auto begin_ptr = reinterpret_cast<const char*>(iter.cbegin());
+    auto end_ptr = reinterpret_cast<const char*>(iter.cend());
+    return sizeof(JavaClassField) + (end_ptr - begin_ptr);
+}
+
+
 AttributeIterator JavaClassAttributeCode::attributeIterator() const {
     
     return AttributeIterator(attrubutes_count(),  attributeBegin());

@@ -60,13 +60,14 @@ class JavaClass {
     uint32_t magic() const;
     JavaClassVersion version() const;
     uint16_t poolCount() const;
-    CLASSACCESSFLAG accessFlags();
+    ACCFLAG accessFlags();
     uint16_t thisClass();
     uint16_t superClass();
     uint16_t interfacesCount();
     uint16_t fieldsCount();
     uint16_t methodsCount();
     uint16_t attributesCount();
+    
     const string sourceFile();
 
     bool isValid() const { return _isValid; }
@@ -76,7 +77,7 @@ class JavaClass {
     ATTRTAG attrTagAtIndex(uint16_t index) const;
     const JavaClassAttribute* attrubuteForTag(ATTRTAG tag) const;
 
-    const PoolIterator poolIterator() const { return _poolIterator; }
+    auto poolIterator() const { return _poolIterator; }
     auto interfaceIterator() const { return _interfaceIterator; }
     auto fieldIterator() const { return _fieldIterator; }
     auto methodIterator() const { return _methodIterator; }

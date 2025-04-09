@@ -51,6 +51,9 @@
     <ClInclude Include="..\jclasscore\JavaStruct.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\jclasscore\JavaTypeDescription.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wlx.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\jclasscore\JavaStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jclasscore\JavaTypeDescription.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -148,13 +148,14 @@ public:
 struct JavaClassInterface;
 struct JavaClassInnerClassInfo;
 struct JavaClassField;
+struct JavaClassMethod;
 struct JavaClassAttribute;
 
 
 typedef class ConstantIterator<JavaClassInterface> InterfaceIterator;
 typedef class ConstantIterator<JavaClassInnerClassInfo> InnerClassInfoIterator;
 typedef class VarribleIterator<JavaClassField> FieldIterator;
-typedef class VarribleIterator<JavaClassField> MethodIterator;
+typedef class VarribleIterator<JavaClassMethod> MethodIterator;
 typedef class VarribleIterator<JavaClassAttribute> AttributeIterator;
 
 

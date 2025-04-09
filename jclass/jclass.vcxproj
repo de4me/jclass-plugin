@@ -192,6 +192,7 @@
     <ClInclude Include="..\jclasscore\JavaIterator.hpp" />
     <ClInclude Include="..\jclasscore\JavaParserText.hpp" />
     <ClInclude Include="..\jclasscore\JavaStruct.hpp" />
+    <ClInclude Include="..\jclasscore\JavaTypeDescription.hpp" />
     <ClInclude Include="cWindow.h" />
     <ClInclude Include="cWlxWindow.h" />
     <ClInclude Include="utils.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="..\jclasscore\JavaIterator.cpp" />
     <ClCompile Include="..\jclasscore\JavaParserText.cpp" />
     <ClCompile Include="..\jclasscore\JavaStruct.cpp" />
+    <ClCompile Include="..\jclasscore\JavaTypeDescription.cpp" />
     <ClCompile Include="cWindow.cpp" />
     <ClCompile Include="cWlxWindow.cpp" />
     <ClCompile Include="utils.cpp" />

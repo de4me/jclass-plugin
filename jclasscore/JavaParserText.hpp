@@ -17,6 +17,7 @@
 
 #include "JavaClassParser.hpp"
 #include "JavaHelper.hpp"
+#include "JavaTypeDescription.hpp"
 
 
 using namespace std;
@@ -58,19 +59,21 @@ public:
     void parseField(const JavaClass& java, const JavaClassField* field) {
         
         auto field_name = java.nameAtIndex(field->name_index());
-        auto value_desc = java.nameAtIndex(field->descriptor_index());
-        auto value_type = JavaHelperTypeName(value_desc);
+        auto text = java.nameAtIndex(field->descriptor_index());
+        auto description = JavaTypeDescription(text);
+        auto value_type = description.str();
         vlaueName = format("{}: {}", field_name, value_type);
-        accessFlags = JavaHelperAccessFlags(field->access_flag());
+        accessFlags = JavaHelperFieldAccessFlags(field->access_flag());
     }
     
     void parseMethod(const JavaClass& java, const JavaClassMethod* method) {
         
-        auto field_name = java.nameAtIndex(method->name_index());
-        auto value_desc = java.nameAtIndex(method->descriptor_index());
-        auto value_type = JavaHelperMethodTypeName(value_desc);
-        vlaueName = format("{} {}", field_name, value_type);
-        accessFlags = JavaHelperAccessFlags(method->access_flag());
+        auto method_name = java.nameAtIndex(method->name_index());
+        auto text = java.nameAtIndex(method->descriptor_index());
+        auto description = JavaTypeDescription(text);
+        auto value_type = description.str();
+        vlaueName = format("{} {}", method_name, value_type);
+        accessFlags = JavaHelperMethodAccessFlags(method->access_flag());
     }
     
     void parse(const JavaClass& java, const JavaClassAttribute* attr) {

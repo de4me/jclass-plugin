@@ -16,6 +16,7 @@ namespace java {
 template class VarribleIterator<JavaClassPool>;
 template class ConstantIterator<JavaClassInterface>;
 template class VarribleIterator<JavaClassField>;
+template class VarribleIterator<JavaClassMethod>;
 template class VarribleIterator<JavaClassAttribute>;
 template class ConstantIterator<JavaClassInnerClassInfo>;
 

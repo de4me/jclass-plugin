@@ -9,11 +9,12 @@
 #define JavaHelper_hpp
 
 
+#include "JavaStruct.hpp"
+
+
 #include <stdio.h>
 #include <string>
-
-
-#include "JavaStruct.hpp"
+#include <vector>
 
 
 using namespace std;
@@ -27,13 +28,16 @@ class JavaClass;
 
 const string JavaHelperPoolTagName(POOLTAG tag);
 const string JavaHelperTypeTagName(TYPETAG tag);
-const string JavaHelperAccessFlags(ACCESSFLAG flags, string separator = " ");
-const string JavaHelperClassAccessFlags(CLASSACCESSFLAG flags, string separator = " ");
-const string JavaHelperVersion(JavaClassVersion& version, bool java_se = false);
 
-const string JavaHelperTypeName(const string& desc);
-const string JavaHelperMethodTypeName(const string& desc);
-const string JavaHelperFieldNameAndType(const JavaClass& java, const JavaClassPool* pool);
+const string JavaHelperVersion(const JavaClassVersion& version, bool java_se = false);
+
+const string JavaHelperAccessFlags(ACCFLAG flags, const string& separator = " ");
+const string JavaHelperFieldAccessFlags(ACCFLAG_FIELD flags, const string& separator = " ");
+const string JavaHelperMethodAccessFlags(ACCFLAG_METHOD flags, const string& separator = " ");
+const string JavaHelperInnerClassAccessFlags(ACCFLAG_INNERCLASS flags, const string& separator = " ");
+const string JavaHelperMethodParameterAccessFlags(ACCFLAG_METHODPARAMETER flags, const string& separator = " ");
+
+const string JavaHelperNameAndType(const JavaClass& java, const JavaClassPool* pool);
 const string JavaHelperMethodNameAndType(const JavaClass& java, const JavaClassPool* pool);
 const string JavaHelperInterfaceNameAndType(const JavaClass& java, const JavaClassPool* pool);
 const string JavaHelperMethodKindName(uint8_t hind);
@@ -47,6 +51,11 @@ const string JavaHelperConstantValue(const JavaClass& java, const JavaClassPool*
 const string JavaHelperConstantValue(const JavaClass& java, uint16_t index);
 const string JavaHelperGetInnerClassName(const JavaClass& java, const JavaClassInnerClassInfo* info);
 const string JavaHelperAccessFlagsAndName(const string flags, const string name);
+
+bool JavaHelperTypeTagValid(TYPETAG tag);
+
+const string JavaHelperTypeNameArray(const string& name, uint8_t dimension);
+const string JavaHelperJoinWithSeparator(const vector<string>& array, const string& separator);
 
 }
 

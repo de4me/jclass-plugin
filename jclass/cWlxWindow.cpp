@@ -201,7 +201,7 @@ void cWlxWindow::parseInfoPage() {
 		is << format("{:26} : {}\r\n", "Source File", java_source);
 	}
 	
-	auto access_flags = JavaHelperClassAccessFlags(_java.accessFlags());
+	auto access_flags = JavaHelperAccessFlags(_java.accessFlags());
 	is << format("{:26} : {}\r\n", "Access Flags", access_flags);
 	auto this_name = _java.nameAtIndex(_java.thisClass());
 	is << format("{:26} : {}\r\n", "This Class", this_name);

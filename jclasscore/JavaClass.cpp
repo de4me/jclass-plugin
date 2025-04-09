@@ -101,10 +101,10 @@ uint16_t JavaClass::poolCount() const {
 }
 
 
-CLASSACCESSFLAG JavaClass::accessFlags() {
+ACCFLAG JavaClass::accessFlags() {
     
     const uint16_t* buffer = reinterpret_cast<const uint16_t*>(_poolIterator.cend());
-    return static_cast<CLASSACCESSFLAG>(BYTESWAP16(buffer[0]));
+    return static_cast<ACCFLAG>(BYTESWAP16(buffer[0]));
 }
 
 
