@@ -353,6 +353,8 @@ public:
 	}
 
 	INT count() { return static_cast<INT>(_tabItems.size()); }
+	BOOL empty() { return count() == 0; }
+
 	void addPage(const tstring& title, cWindow& window, UINT_PTR tabid = 0);
 
 	void setSelectedIndex(INT index) override;

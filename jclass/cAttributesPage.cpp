@@ -37,6 +37,8 @@ void cAttributesPage::parse(java::AttributeIterator attributes) {
 		return;
 	}
 
+	clear();
+
 	auto java = _dataSource->java();
 
 	INT code_index = 0;

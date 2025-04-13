@@ -23,12 +23,14 @@ cWlxWindow::cWlxWindow(HWND parent) :
 	_headerPage(module, this, this),
 	_methodsPage(module, this, this),
 	_fieldsPage(module, this, this),
+	_attributesPage(module, this, this),
 	_tabControl(this, IDC_MAIN_TAB)
 {
 	_tabControl.addPage(_T("File Properties"), _propertiesPage);
 	_tabControl.addPage(_T("File Header"), _headerPage);
 	_tabControl.addPage(_T("Fields"), _fieldsPage);
 	_tabControl.addPage(_T("Methods"), _methodsPage);
+	_tabControl.addPage(_T("Attributes"), _attributesPage);
 	_tabControl.setSelectedIndex(0);
 
 	_font = CreateFont(14, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, _T("Courier New"));
@@ -36,6 +38,7 @@ cWlxWindow::cWlxWindow(HWND parent) :
 	_headerPage.setFont(_font);
 	_methodsPage.setFont(_font);
 	_fieldsPage.setFont(_font);
+	_attributesPage.setFont(_font);
 }
 
 
@@ -95,6 +98,14 @@ void cWlxWindow::onPageChange(INT page) {
 		_methodsPage.parse();
 		break;
 
+	case 4:
+
+		if (!_attributesPage.empty()) {
+			return;
+		}
+		_attributesPage.parse(_java.attrIterator());
+		break;
+
 	default:
 		break;
 	}
@@ -145,6 +156,7 @@ void cWlxWindow::parse() {
 		_propertiesPage.clear();
 		_methodsPage.clear();
 		_fieldsPage.clear();
+		_attributesPage.clear();
 		break;
 
 	case 2:
@@ -152,12 +164,22 @@ void cWlxWindow::parse() {
 		_methodsPage.clear();
 		_propertiesPage.clear();
 		_headerPage.clear();
+		_attributesPage.clear();
 		break;
 
 	case 3:
 		_methodsPage.parse();
 		_propertiesPage.clear();
 		_headerPage.clear();
+		_fieldsPage.clear();
+		_attributesPage.clear();
+		break;
+
+	case 4:
+		_attributesPage.parse(_java.attrIterator());
+		_propertiesPage.clear();
+		_headerPage.clear();
+		_methodsPage.clear();
 		_fieldsPage.clear();
 		break;
 
@@ -166,6 +188,7 @@ void cWlxWindow::parse() {
 		_headerPage.clear();
 		_methodsPage.clear();
 		_fieldsPage.clear();
+		_attributesPage.clear();
 		break;
 	}
 }

@@ -69,7 +69,6 @@ void cFieldsPage::updateField(JavaClass& java, const JavaClassField* field) {
 	_descriptionTextField.setText(typedescription_string, CP_UTF8);
 	_attributesCountTextField.setText(attributescount_string);
 
-	_attributesPage.clear();
 	_attributesPage.parse(field->attributeIterator());
 }
 
