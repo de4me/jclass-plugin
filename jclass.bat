@@ -51,3 +51,6 @@ cd "%CURRENTDIR%"
 
 
 :exit
+
+
+endlocal
