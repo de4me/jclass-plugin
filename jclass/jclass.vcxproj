@@ -186,6 +186,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\jclasscore\Error.hpp" />
+    <ClInclude Include="..\jclasscore\HexFormatter.hpp" />
     <ClInclude Include="..\jclasscore\JavaClass.hpp" />
     <ClInclude Include="..\jclasscore\JavaClassParser.hpp" />
     <ClInclude Include="..\jclasscore\JavaHelper.hpp" />
@@ -193,13 +194,20 @@
     <ClInclude Include="..\jclasscore\JavaParserText.hpp" />
     <ClInclude Include="..\jclasscore\JavaStruct.hpp" />
     <ClInclude Include="..\jclasscore\JavaTypeDescription.hpp" />
+    <ClInclude Include="cAttributesPage.h" />
+    <ClInclude Include="cAttributeUnknownPage.h" />
+    <ClInclude Include="cHeaderPage.h" />
+    <ClInclude Include="cMethodsPage.h" />
+    <ClInclude Include="cPropertiesPage.h" />
     <ClInclude Include="cWindow.h" />
     <ClInclude Include="cWlxWindow.h" />
+    <ClInclude Include="DataSource.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="wlx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\jclasscore\HexFormatter.cpp" />
     <ClCompile Include="..\jclasscore\JavaClass.cpp" />
     <ClCompile Include="..\jclasscore\JavaClassParser.cpp" />
     <ClCompile Include="..\jclasscore\JavaHelper.cpp" />
@@ -207,6 +215,11 @@
     <ClCompile Include="..\jclasscore\JavaParserText.cpp" />
     <ClCompile Include="..\jclasscore\JavaStruct.cpp" />
     <ClCompile Include="..\jclasscore\JavaTypeDescription.cpp" />
+    <ClCompile Include="cAttributesPage.cpp" />
+    <ClCompile Include="cAttributeUnknownPage.cpp" />
+    <ClCompile Include="cHeaderPage.cpp" />
+    <ClCompile Include="cMethodsPage.cpp" />
+    <ClCompile Include="cPropertiesPage.cpp" />
     <ClCompile Include="cWindow.cpp" />
     <ClCompile Include="cWlxWindow.cpp" />
     <ClCompile Include="utils.cpp" />

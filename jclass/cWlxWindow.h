@@ -2,13 +2,17 @@
 
 
 #include "cWindow.h"
+#include "DataSource.h"
 #include "JavaClass.hpp"
+#include "cPropertiesPage.h"
+#include "cHeaderPage.h"
+#include "cMethodsPage.h"
 
 
 extern cModule module;
 
 
-class cWlxWindow: public cWindow
+class cWlxWindow: public cWindow, public DataSource
 {
 
 private:
@@ -16,30 +20,32 @@ private:
 	string _filePath;
 	HFONT _font;
 	cTabControl _tabControl;
-	cWindow _infoPage;
-	cWindow _headerPage;
-	cTextField _infoTextField;
-	cTextField _headerTextField;
+	cPropertiesPage _propertiesPage;
+	cHeaderPage _headerPage;
+	cMethodsPage _methodsPage;
 	java::JavaClass _java;
+
+	void onDeinit() override;
+	void onSizeChange(SIZE& size) override;
+	void onSelectionChange(IControl&, ISelectionIndex&) override;
+
+	void onPageChange(INT index);
 
 public:
 
 	cWlxWindow(HWND parent);
 	~cWlxWindow();
 
-	void setFilePath(const string path) { _filePath = path; }
-	void setParentFocus();
+	java::JavaClass& java() override { return _java; }
+	const std::string& filePath() override { return _filePath; }
 
-	void onDeinit() override;
-	void onSizeChange(SIZE& size) override;
-	void onSelectionChange(IControl&, ISelectionIndex&) override;
+	void setFilePath(const string& path) { _filePath = path; }
+	void setParentFocus();
 
 	void read(istream& file, size_t size) { _java.read(file, size); }
 
 	void parse();
-	void parseHeaderPage();
-	void parseInfoPage();
-
+	
 	void pageNext();
 	void pagePrev();
 };

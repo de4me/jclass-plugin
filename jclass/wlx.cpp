@@ -1,17 +1,16 @@
+
+
 #include "wlx.h"
+#include "cWlxWindow.h"
 
 
 #include <fstream>
 #include <format>
 
 
-#include "cWlxWindow.h"
-
-
 const char detect_string[] = "EXT=\"CLASS\" & [0]=202 & [1]=254 & [2]=186 & [3]=190";
 
-
-const TCHAR* class_string = _T("TCWLX-jclass");
+const TCHAR* class_name = _T("TCWLX-jclass");
 
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -25,13 +24,13 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
     case DLL_PROCESS_ATTACH:
     {
         module.setHandle(hModule);
-        const WNDCLASS wndclass = { 0, WndProc, 0, sizeof(PVOID), hModule, nullptr, nullptr, nullptr, nullptr, class_string};
+        const WNDCLASS wndclass = { 0, WndProc, 0, sizeof(PVOID), hModule, nullptr, nullptr, nullptr, nullptr, class_name};
         return RegisterClass(&wndclass) != 0;
         break;
     }
 
     case DLL_PROCESS_DETACH:
-        UnregisterClass(class_string, hModule);
+        UnregisterClass(class_name, hModule);
         break;
 
     case DLL_THREAD_ATTACH:
@@ -54,7 +53,7 @@ void WINAPI ListGetDetectString(char* DetectString, int maxlen) {
 
 HWND WINAPI ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags) {
 
-    auto handle = CreateWindow(class_string, nullptr, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE, 0, 0, 400, 300, ParentWin, nullptr, module.handle(), nullptr);
+    auto handle = CreateWindow(class_name, nullptr, WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE, 0, 0, 400, 300, ParentWin, nullptr, module.handle(), nullptr);
     if (handle == nullptr) {
         return nullptr;
     }

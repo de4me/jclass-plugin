@@ -9,93 +9,64 @@
 #include <windowsx.h>
 
 
-template<class T> void cList<T>::append(T* item) {
+const tstring empty_string(_T(""));
 
-	if (auto current = this->_last) {
-		current->_next = item;
-		this->_last = item;
+
+const wstring multibytetowstring(const string& text, UINT code_page) {
+
+	auto length = MultiByteToWideChar(code_page, 0, text.c_str(), -1, nullptr, 0);
+	if (length == 0) {
+		return empty_string;
 	}
-	else {
-		this->_next = item;
-		this->_last = item;
+	wstring result(length, 0);
+	if (MultiByteToWideChar(code_page, 0, text.c_str(), -1, result.data(), length) == 0) {
+		return empty_string;
 	}
+	return result;
 }
 
 
-cIcon cModule::icon(INT iResourceID) {
+cIcon cModule::icon(INT iResourceID) const {
 
-	return cIcon(iResourceID, *this);
+	auto icon = LoadIcon(handle(), MAKEINTRESOURCE(iResourceID));
+	return cIcon(icon);
 }
 
 
 cControl::cControl(cWindow* parent, INT iResourceID) {
 
-	this->_id = iResourceID;
-	this->_parent = parent;
-	this->_handle = GetDlgItem(parent->handle(), iResourceID);
+	_id = iResourceID;
+	_parent = parent;
+	_handle = GetDlgItem(parent->handle(), iResourceID);
 	parent->registerControl(this);
 }
 
 
 FRAME cControl::bounds() {
 
-	RECT rect = { 0 };
-	GetClientRect(handle(), &rect);
-	return {rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top};
+	RECT rc = rect();
+	return { 0, 0, rc.right - rc.left, rc.bottom - rc.top};
 }
 
 
-BOOL cControl::isHidden() {
+RECT cControl::rect() {
 
-	return !IsWindowVisible(handle());
+	RECT rect;
+	GetWindowRect(handle(), &rect);
+	return rect;
 }
 
 
-void cControl::setHidden(BOOL hidden) {
+void cControl::setSize(SIZE& size) {
 
-	ShowWindow(handle(), hidden ? SW_HIDE : SW_SHOWNOACTIVATE);
-}
-
-
-BOOL cControl::isEnabled() {
-
-	return IsWindowEnabled(handle());
-}
-
-
-void cControl::setEnabled(BOOL enabled) {
-
-	EnableWindow(handle(), enabled);
-}
-
-
-void cControl::setText(const tstring text) {
-
-	SetWindowText(handle(), text.c_str());
-}
-
-
-tstring cControl::text() {
-
-	size_t count = GetWindowTextLength(handle());
-	vector<TCHAR> buffer(count + 1);
-	Edit_GetText(handle(), buffer.data(), static_cast<INT>(buffer.size()));
-	return tstring(buffer.data(), count);
-}
-
-
-void cControl::setSize(SIZE size) {
-
-	SetWindowPos(handle(), nullptr, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
+	SetWindowPos(handle(), nullptr, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 
 SIZE cControl::size() {
 
-	RECT rect;
-	GetClientRect(handle(), &rect);
-	MapDialogRect(handle(), &rect);
-	return { rect.right, rect.bottom };
+	RECT rc = rect();
+	return { rc.right - rc.left, rc.bottom - rc.top };
 }
 
 
@@ -170,31 +141,81 @@ void cRadioButton::setState(ControlState state) {
 }
 
 
-void cComboBox::setItems(vector<tstring> items) {
+const tstring cComboBox::stringAtIndex(INT index) {
 
-	this->_items = items;
-	ComboBox_ResetContent(handle());
-	for (auto &text : items) {
-		ComboBox_AddString(handle(), text.c_str());
+	auto length = ComboBox_GetLBTextLen(handle(), index);
+	if (length == 0) {
+		return empty_string;
 	}
-	setSelectedIndex(0);
-	FRAME rect = bounds();
-	LONG height = rect.size.cy;
-	height += ComboBox_GetItemHeight(handle()) * static_cast<LONG>(items.size());
-	height += GetSystemMetrics(SM_CXFRAME) * 2;
-	SetWindowPos(handle(), NULL, 0, 0, rect.size.cx, height, SWP_NOACTIVATE | SWP_NOZORDER);
+	tstring result(length + 1, 0);
+	if (ComboBox_GetLBText(handle(), index, result.data()) != length) {
+		return empty_string;
+	}
+	return result;
 }
 
 
-INT cComboBox::selectedIndex() {
+void cComboBox::setStrings(const vector<tstring>& strings) {
 
-	return ComboBox_GetCurSel(handle());
+	ComboBox_ResetContent(handle());
+	for (auto const &str : strings) {
+		add(str);
+	}
 }
 
 
-void cComboBox::setSelectedIndex(INT index) {
+void cLabel::setText(const string& text, UINT codepage) {
+	if (codepage == CP_ACP) {
+		SetWindowTextA(handle(), text.c_str());
+	}
+	else {
+		auto wstring = multibytetowstring(text, codepage);
+		setText(wstring);
+	}
+}
 
-	ComboBox_SetCurSel(handle(), index);
+
+tstring cLabel::text() {
+
+	size_t count = GetWindowTextLength(handle());
+	vector<TCHAR> buffer(count + 1);
+	Edit_GetText(handle(), buffer.data(), static_cast<INT>(buffer.size()));
+	return tstring(buffer.data(), count);
+}
+
+
+cTabControl::TabItem* cTabControl::TabItem::newTabItem(cWindow& window, const tstring& caption, UINT_PTR tabid) {
+
+	size_t caption_size = (caption.size() + 1) * sizeof(TCHAR);
+	size_t item_size = sizeof(TabItem) + caption_size;
+
+	TabItem* result = reinterpret_cast<TabItem*>(malloc(item_size));
+	if (result == nullptr) {
+		return nullptr;
+	}
+	result->mask = TCIF_TEXT | TCIF_PARAM;
+	result->pszText = result->caption;
+	result->handle = window.handle();
+	result->id = tabid;
+	memcpy(result->caption, caption.c_str(), caption_size);
+	return result;
+}
+
+
+void cTabControl::addPage(const tstring& title, cWindow& child, UINT_PTR tabid) {
+
+	TabItem* item = TabItem::newTabItem(child, title, tabid);
+	if (item == nullptr) {
+		return;
+	}
+
+	_tabItems.push_back(item);
+
+	if (_hasTabs) {
+		TabCtrl_InsertItem(handle(), _tabItems.size(), item);
+	}
+
+	SetParent(child.handle(), handle());
 }
 
 
@@ -218,33 +239,20 @@ void cTabControl::setSize(SIZE size) {
 
 	cControl::setSize(size);
 	FRAME rect = bounds();
-	for (auto item : _items) {
-		SetWindowPos(item.handle, HWND_TOP, rect.point.x, rect.point.y, rect.size.cx, rect.size.cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
+	for (auto item : _tabItems) {
+		SetWindowPos(item->handle, nullptr, rect.point.x, rect.point.y, rect.size.cx, rect.size.cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
 	}
-}
-
-
-void cTabControl::addPageWindow(cWindow& child, tstring title) {
-
-	TabItem item;
-	item.handle = child.handle();
-	this->_items.push_back(item);
-	if (_hasTabs) {
-		TCITEM citem;
-		citem.mask = TCIF_TEXT;
-		citem.pszText = (LPTSTR) title.c_str();
-		TabCtrl_InsertItem(handle(), _items.size(), &citem);
-	}
-	SetParent(child.handle(), handle());
 }
 
 
 INT cTabControl::selectedIndex() {
 
-	for (INT i = 0; i < static_cast<INT>(_items.size()); i++) {
-		if (IsWindowVisible(_items[i].handle)) {
-			return i;
+	INT index = 0;
+	for (auto item: _tabItems) {
+		if (IsWindowVisible(item->handle)) {
+			return index;
 		}
+		index++;
 	}
 	return -1;
 }
@@ -253,23 +261,38 @@ INT cTabControl::selectedIndex() {
 void cTabControl::setSelectedIndex(INT index) {
 
 	TabCtrl_SetCurSel(handle(), index);
-
 	updateSelectedIndex(index);
 }
 
 
 void cTabControl::updateSelectedIndex(INT index) {
 
-	for (INT i = 0; i < static_cast<INT>(_items.size()); i++) {
-		HWND wnd = _items[i].handle;
-		if (i == index) {
-			adjustPageFrame(wnd);
-			ShowWindow(wnd, SW_SHOWNA);
+	INT current = 0;
+	for (auto item: _tabItems) {
+		HWND handle = item->handle;
+		if (current == index) {
+			adjustPageFrame(handle);
+			ShowWindow(handle, SW_SHOWNA);
 		}
 		else {
-			ShowWindow(wnd, SW_HIDE);
+			ShowWindow(handle, SW_HIDE);
 		}
+		current++;
 	}
+}
+
+
+void cTabControl::clear() {
+
+	TabCtrl_DeleteAllItems(handle());
+
+	for (auto item: _tabItems) {
+
+		DestroyWindow(item->handle);
+		free(item);
+	}
+
+	_tabItems.clear();
 }
 
 
@@ -389,15 +412,17 @@ void cProgress::setMaxValue(INT value) {
 }
 
 
-cWindow::cWindow(cModule& module, INT iResourceID, HWND parent) :
-	_parent(nullptr)
+cWindow::cWindow(const cModule& module, UINT_PTR iResourceID, HWND parent) :
+	_parent(nullptr),
+	_id(iResourceID)
 {
 
 	_handle = CreateDialogParam(module.handle(), MAKEINTRESOURCE(iResourceID), parent, DlgProc, reinterpret_cast<LPARAM>(this));
 }
 
 
-cWindow::cWindow(cModule& module, INT iResourceID, cWindow* parent)
+cWindow::cWindow(const cModule& module, UINT_PTR iResourceID, cWindow* parent) :
+	_id(iResourceID)
 {
 	_parent = parent;
 	HWND wnd = parent ? parent->handle() : nullptr;
@@ -407,57 +432,43 @@ cWindow::cWindow(cModule& module, INT iResourceID, cWindow* parent)
 
 SIZE cWindow::size() {
 
-	RECT rect = { 0 };
-	GetClientRect(handle(), &rect);
-	return {rect.right - rect.left, rect.bottom - rect.top};
+	RECT rc = rect();
+	return { rc.right - rc.left, rc.bottom - rc.top};
 }
 
 
 FRAME cWindow::bounds() {
 
-	RECT rect = { 0 };
-	GetClientRect(handle(), &rect);
-	return {rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top};
+	RECT rc = rect();
+	return {0, 0, rc.right - rc.left, rc.bottom - rc.top};
 }
 
 
-BOOL cWindow::isHidden() {
+RECT cWindow::rect() {
 
-	return !IsWindowVisible(handle());
+	RECT rect;
+	GetWindowRect(handle(), &rect);
+	return rect;
 }
 
 
-void cWindow::setHidden(BOOL hidden) {
+cControl* cWindow::controlWithId(UINT_PTR iResourceID) {
 
-	ShowWindow(handle(), hidden ? SW_HIDE : SW_SHOW);
-}
-
-
-void cWindow::close() {
-
-	DestroyWindow(handle());
-}
-
-
-cControl* cWindow::findControlWithId(UINT_PTR iResourceID) {
-
-	for (cControl* control = this->next(); control != nullptr; control = control->next()) {
-		if (control->id() != iResourceID) {
-			continue;
+	for (auto const control : _registredControls) {
+		if (control->id() == iResourceID) {
+			return control;
 		}
-		return control;
 	}
 	return nullptr;
 }
 
 
-cControl* cWindow::findControlWithHandle(HWND handle) {
+cControl* cWindow::controlWithHandle(HWND handle) {
 
-	for (cControl* control = this->next(); control != nullptr; control = control->next()) {
-		if (control->handle() != handle) {
-			continue;
+	for (auto const control : _registredControls) {
+		if (control->handle() == handle) {
+			return control;
 		}
-		return control;
 	}
 	return nullptr;
 }
@@ -472,6 +483,85 @@ void cWindow::setCaption(tstring caption) {
 void cWindow::setIcon(cIcon icon) {
 
 	SendMessage(handle(), WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(icon.handle()));
+}
+
+
+void cWindow::onDeinit() {
+
+}
+
+void cWindow::onSizeChange(SIZE& size) {
+
+}
+
+void cWindow::onClick(IControl& control) {
+
+	if (_parent == nullptr) {
+		return;
+	}
+	_parent->onClick(control);
+}
+
+void cWindow::onStateChange(IControl& control, IState& state) {
+
+	if (_parent == nullptr) {
+		return;
+	}
+	_parent->onStateChange(control, state);
+}
+
+
+void cWindow::onSelectionChange(IControl& control, ISelectionIndex& index) {
+
+	if (_parent == nullptr) {
+		return;
+	}
+	_parent->onSelectionChange(control, index);
+}
+
+
+void cWindow::onValueChange(IControl& control, IValue& value) {
+
+	if (_parent == nullptr) {
+		return;
+	}
+	_parent->onValueChange(control, value);
+}
+
+
+void cWindow::onFocus(IControl& control) {
+
+	if (_parent == nullptr) {
+		return;
+	}
+	_parent->onFocus(control);
+}
+
+
+void cWindow::onKillFocus(IControl& control) {
+
+	if (_parent == nullptr) {
+		return;
+	}
+	_parent->onKillFocus(control);
+}
+
+
+void cWindow::onDisable(IControl& control) {
+
+	if (_parent == nullptr) {
+		return;
+	}
+	_parent->onDisable(control);
+}
+
+
+void cWindow::onChange(IControl& control) {
+
+	if (_parent == nullptr) {
+		return;
+	}
+	_parent->onChange(control);
 }
 
 
@@ -533,12 +623,11 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 		auto message_text = format("NOTIFY: {}\n", notify->code);
 		OutputDebugStringA(message_text.c_str());
 #endif
-		cControl* control = window->findControlWithId(notify->idFrom);
+		cControl* control = window->controlWithId(notify->idFrom);
 		if (control == nullptr) {
 			return FALSE;
 		}
 
-		cWindow* parent = window->parent();
 		if (cTabControl* tabcontrol = dynamic_cast<cTabControl*>(control)) {
 			switch (notify->code)
 			{
@@ -547,9 +636,6 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 				INT index = TabCtrl_GetCurSel(tabcontrol->handle());
 				tabcontrol->updateSelectedIndex(index);
 				window->onSelectionChange(*tabcontrol, *tabcontrol);
-				if (parent) {
-					parent->onSelectionChange(*tabcontrol, *tabcontrol);
-				}
 				return TRUE;
 			}
 
@@ -563,9 +649,6 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 			case NM_RELEASEDCAPTURE:
 
 				window->onValueChange(*slider, *slider);
-				if (parent) {
-					parent->onValueChange(*slider, *slider);
-				}
 				return FALSE;
 
 			default:
@@ -597,44 +680,32 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 		OutputDebugString(text.c_str());
 		OutputDebugString(L"=COMMAND\n");
 #endif
-		cControl* control = window->findControlWithId(LOWORD(wparam));
+		cControl* control = window->controlWithId(LOWORD(wparam));
 		if (control == nullptr) {
 			return FALSE;
 		}
-		cWindow* parent = window->parent();
+
 		if (cCheckBox* checkbox = dynamic_cast<cCheckBox*>(control)) {
 			switch (notify)
 			{
 			case BN_CLICKED:
 
 				window->onStateChange(*checkbox, *checkbox);
-				if (parent) {
-					parent->onStateChange(*checkbox, *checkbox);
-				}
 				return FALSE;
 
 			case BN_DISABLE:
 
 				window->onDisable(*checkbox);
-				if (parent) {
-					parent->onDisable(*checkbox);
-				}
 				return FALSE;
 
 			case BN_SETFOCUS:
 
 				window->onFocus(*checkbox);
-				if (parent) {
-					parent->onFocus(*checkbox);
-				}
 				return FALSE;
 
 			case BN_KILLFOCUS:
 
 				window->onKillFocus(*checkbox);
-				if (parent) {
-					parent->onKillFocus(*checkbox);
-				}
 				return FALSE;
 
 			default:
@@ -647,33 +718,21 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 			case BN_CLICKED:
 
 				window->onStateChange(*radio, *radio);
-				if (parent) {
-					parent->onStateChange(*radio, *radio);
-				}
 				return FALSE;
 
 			case BN_DISABLE:
 
 				window->onDisable(*radio);
-				if (parent) {
-					parent->onDisable(*radio);
-				}
 				return FALSE;
 
 			case BN_SETFOCUS:
 
 				window->onFocus(*radio);
-				if (parent) {
-					parent->onFocus(*radio);
-				}
 				return FALSE;
 
 			case BN_KILLFOCUS:
 
 				window->onKillFocus(*radio);
-				if (parent) {
-					parent->onKillFocus(*radio);
-				}
 				return FALSE;
 
 			default:
@@ -686,33 +745,21 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 			case BN_CLICKED:
 
 				window->onClick(*button);
-				if (parent) {
-					parent->onClick(*button);
-				}
 				return FALSE;
 
 			case BN_DISABLE:
 
 				window->onDisable(*button);
-				if (parent) {
-					parent->onDisable(*button);
-				}
 				return FALSE;
 
 			case BN_SETFOCUS:
 
 				window->onFocus(*button);
-				if (parent) {
-					parent->onFocus(*button);
-				}
 				return FALSE;
 
 			case BN_KILLFOCUS:
 
 				window->onKillFocus(*button);
-				if (parent) {
-					parent->onKillFocus(*button);
-				}
 				return FALSE;
 
 			default:
@@ -724,25 +771,16 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 			case EN_SETFOCUS:
 
 				window->onFocus(*field);
-				if (parent) {
-					parent->onFocus(*field);
-				}
 				return FALSE;
 
 			case EN_KILLFOCUS:
 
 				window->onKillFocus(*field);
-				if (parent) {
-					parent->onKillFocus(*field);
-				}
 				return FALSE;
 
 			case EN_CHANGE:
 
 				window->onChange(*field);
-				if (parent) {
-					parent->onChange(*field);
-				}
 				return FALSE;
 
 			default:
@@ -755,33 +793,21 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 			case CBN_SELCHANGE:
 
 				window->onSelectionChange(*combobox, *combobox);
-				if (parent) {
-					parent->onSelectionChange(*combobox, *combobox);
-				}
 				return FALSE;
 
 			case CBN_EDITCHANGE:
 
 				window->onChange(*combobox);
-				if (parent) {
-					parent->onChange(*combobox);
-				}
 				return FALSE;
 
 			case CBN_SETFOCUS:
 
 				window->onFocus(*combobox);
-				if (parent) {
-					parent->onFocus(*combobox);
-				}
 				return FALSE;
 
 			case CBN_KILLFOCUS:
 
 				window->onKillFocus(*combobox);
-				if (parent) {
-					parent->onKillFocus(*combobox);
-				}
 				return FALSE;
 
 			default:
@@ -794,9 +820,6 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 			case BN_CLICKED:
 
 				window->onValueChange(*stepper, *stepper);
-				if (parent) {
-					parent->onValueChange(*stepper, *stepper);
-				}
 				return FALSE;
 
 			default:
@@ -811,12 +834,11 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 	case WM_HSCROLL:
 	{
 		INT notify = LOWORD(wparam);
-		cControl* control = window->findControlWithHandle(reinterpret_cast<HWND>(lparam));
+		cControl* control = window->controlWithHandle(reinterpret_cast<HWND>(lparam));
 		if (control == nullptr) {
 			return FALSE;
 		}
 
-		cWindow* parent = window->parent();
 		if (cSlider* slider = dynamic_cast<cSlider*>(control)) {
 			switch (notify) {
 
@@ -824,9 +846,6 @@ INT_PTR cWindow::DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam
 			case SB_LINERIGHT:
 
 				window->onValueChange(*slider, *slider);
-				if (parent) {
-					parent->onValueChange(*slider, *slider);
-				}
 				return FALSE;
 
 			default:

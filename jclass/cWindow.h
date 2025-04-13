@@ -2,10 +2,13 @@
 
 
 #include <windows.h>
+#include <CommCtrl.h>
+#include <windowsx.h>
 #include <tchar.h>
 #include <string>
 #include <array>
 #include <vector>
+#include <list>
 
 
 using namespace std;
@@ -28,6 +31,7 @@ class cButton;
 class cComboBox;
 class cLabel;
 class cTextField;
+class cWindow;
 
 
 struct FRAME {
@@ -36,36 +40,10 @@ struct FRAME {
 };
 
 
-template<class T> class cList;
+extern const tstring empty_string;
 
 
-template<class T>
-class cListItem {
-
-	friend cList<T>;
-
-private:
-
-	T* _next;
-
-public:
-
-	T* next() { return this->_next; }
-};
-
-
-template<class T>
-class cList : public cListItem<T>
-{
-
-private:
-
-	T* _last;
-
-public:
-
-	void append(T* item);
-};
+const wstring multibytetowstring(const string& text, UINT code_page = CP_ACP);
 
 
 class IControl {
@@ -73,19 +51,16 @@ class IControl {
 public:
 
 	virtual ~IControl() = default;
+
 	virtual UINT_PTR id() = 0;
 	virtual cWindow* parent() = 0;
 	virtual HWND handle() = 0;
+
 	virtual BOOL isHidden() = 0;
 	virtual void setHidden(BOOL) = 0;
+
 	virtual BOOL isEnabled() = 0;
 	virtual void setEnabled(BOOL) = 0;
-	virtual FRAME bounds() = 0;
-	virtual void setText(tstring) = 0;
-	virtual tstring text() = 0;
-	virtual size_t textLength() = 0;
-	virtual HWND setFocus() = 0;
-	virtual HWND getFocus() = 0;
 };
 
 
@@ -151,10 +126,10 @@ public:
 
 	}
 
-	HMODULE handle() { return this->_handle; }
+	HMODULE handle() const { return this->_handle; }
 	void setHandle(HMODULE handle) { _handle = handle; }
 
-	cIcon icon(INT iResourceID);
+	cIcon icon(INT iResourceID) const;
 };
 
 
@@ -166,22 +141,17 @@ private:
 
 public:
 
-	cIcon(INT iResourceID, cModule module) {
-
-		this->_handle = LoadIcon(module.handle(), MAKEINTRESOURCE(iResourceID));
-	}
-
 	cIcon(HICON handle) :
 		_handle(handle)
 	{
 
 	}
 
-	HICON handle() { return this->_handle; }
+	HICON handle() const { return this->_handle; }
 };
 
 
-class cControl: public cListItem<cControl>, public IControl {
+class cControl: public IControl {
 
 private:
 
@@ -214,25 +184,29 @@ public:
 	UINT_PTR id() override { return this->_id; }
 	HWND handle() override { return this->_handle; }
 
-	HWND setFocus() override { return SetFocus(handle()); }
-	HWND getFocus() override { return GetFocus(); }
+	HWND setFocus() { return SetFocus(handle()); }
+	HWND getFocus() { return GetFocus(); }
 	
-	BOOL isHidden() override;
-	void setHidden(BOOL hidden) override;
+	BOOL isHidden() override { return !IsWindowVisible(handle()); }
+	void setHidden(BOOL hidden) override { ShowWindow(handle(), hidden ? SW_HIDE : SW_SHOWNOACTIVATE); }
 	
-	BOOL isEnabled() override;
-	void setEnabled(BOOL enabled) override;
+	BOOL isEnabled() override { return IsWindowEnabled(handle()); }
+	void setEnabled(BOOL enabled) override { EnableWindow(handle(), enabled); }
 
-	tstring text() override;
-	void setText(const tstring text) override;
-	size_t textLength() override { return SendMessage(handle(), WM_GETTEXTLENGTH, 0, 0); }
-
-	FRAME bounds();
-	SIZE size();
-	void setSize(SIZE size);
+	void setFont(HFONT font) { SendMessage(handle(), WM_SETFONT, reinterpret_cast<WPARAM>(font), 1); }
 
 	LONG setExStyle(LONG style) { return SetWindowLong(handle(), GWL_EXSTYLE, style); }
 	LONG exStyle() { return GetWindowLong(handle(), GWL_EXSTYLE); }
+
+	virtual FRAME bounds();
+
+	virtual RECT rect();
+	virtual void setRect(RECT& rect) { SetWindowPos(handle(), nullptr, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOACTIVATE | SWP_NOZORDER); };
+
+	virtual SIZE size();
+	virtual void setSize(SIZE& size);
+
+	virtual void clear() { ; }
 };
 
 
@@ -280,10 +254,6 @@ public:
 
 class cComboBox : public cControl, public ISelectionIndex {
 
-private:
-
-	vector<tstring> _items;
-
 public:
 
 	cComboBox(cWindow* parent, INT iResourceID) :
@@ -292,11 +262,24 @@ public:
 
 	}
 
-	vector<tstring> items() { return this->_items; }
-	void setItems(vector<tstring> items);
+	INT selectedIndex() override { return ComboBox_GetCurSel(handle()); }
+	void setSelectedIndex(INT index) override { ComboBox_SetCurSel(handle(), index); }
 
-	INT selectedIndex() override;
-	void setSelectedIndex(INT index) override;
+	INT indexOf(const tstring& str) { return ComboBox_FindString(handle(), 0, str.c_str()); }
+
+	INT add(const tstring& str) { return ComboBox_AddString(handle(), str.c_str()); }
+	INT insert(const tstring& str, INT index) { return ComboBox_InsertString(handle(), index, str.c_str()); }
+	size_t remove(const tstring& str) { return remove(indexOf(str)); }
+	size_t remove(INT index) { return ComboBox_DeleteString(handle(), index); }
+
+	const tstring stringAtIndex(INT index);
+
+	void setStrings(const vector<tstring>& strings);
+
+	int count() { return ComboBox_GetCount(handle()); }
+	BOOL empty() { return count() == 0; }
+
+	void clear() override { ComboBox_ResetContent(handle()); }
 };
 
 
@@ -309,6 +292,16 @@ public:
 	{
 
 	}
+
+	void setText(const string& text, UINT codepage = CP_ACP);
+	void setText(const wstring& text) { SetWindowTextW(handle(), text.c_str()); }
+
+	tstring text();
+
+	INT length() { return GetWindowTextLength(handle()); }
+	BOOL empty() { return length() == 0; }
+
+	void clear() { SetWindowText(handle(), nullptr); }
 };
 
 
@@ -321,20 +314,25 @@ public:
 	{
 
 	}
+	
 };
 
 
 class cTabControl : public cControl, public ISelectionIndex {
 
-	struct TabItem {
-		HWND handle;
-	};
-
 	friend class cWindow;
+
+	struct TabItem: public TCITEMHEADER {
+		HWND handle;
+		UINT_PTR id;
+		TCHAR caption[];
+
+		static TabItem* newTabItem(cWindow& window, const tstring& caption, UINT_PTR tabid = 0);
+	};
 
 private:
 
-	vector<TabItem> _items;
+	list<TabItem*> _tabItems;
 	BOOL _hasTabs;
 
 	void adjustPageFrame(HWND page);
@@ -349,14 +347,21 @@ public:
 
 	}
 
-	INT pagesCount() { return static_cast<INT>(_items.size()); }
-	void addPageWindow(cWindow& window, tstring title);
+	~cTabControl() {
+
+		clear();
+	}
+
+	INT count() { return static_cast<INT>(_tabItems.size()); }
+	void addPage(const tstring& title, cWindow& window, UINT_PTR tabid = 0);
 
 	void setSelectedIndex(INT index) override;
 	INT selectedIndex() override;
 
 	void setSize(SIZE size);
 	FRAME bounds();
+
+	void clear();
 };
 
 
@@ -427,48 +432,60 @@ public:
 };
 
 
-class cWindow: cList<cControl> {
+class cWindow: public IControl {
 
 private:
 
 	HWND _handle;
-	INT _id;
+	UINT_PTR _id;
 	cWindow* _parent;
+	list<cControl*> _registredControls;
 
 	static INT_PTR WINAPI DlgProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam);
 
+protected:
+
+	virtual void onDeinit();
+	virtual void onClick(IControl&);
+	virtual void onStateChange(IControl&, IState&);
+	virtual void onSelectionChange(IControl&, ISelectionIndex&);
+	virtual void onValueChange(IControl&, IValue&);
+	virtual void onFocus(IControl&);
+	virtual void onKillFocus(IControl&);
+	virtual void onDisable(IControl&);
+	virtual void onChange(IControl&);
+	virtual void onSizeChange(SIZE& size);
+
 public:
 
-	cWindow(cModule& module, INT iResourceID, cWindow* parent = nullptr);
-	cWindow(cModule& module, INT iResourceID, HWND parent);
+	cWindow(const cModule& module, UINT_PTR iResourceID, cWindow* parent = nullptr);
+	cWindow(const cModule& module, UINT_PTR iResourceID, HWND parent);
 
-	virtual void onDeinit() {};
-	virtual void onClick(IControl&) {};
-	virtual void onStateChange(IControl&, IState&) {};
-	virtual void onSelectionChange(IControl&, ISelectionIndex&) {};
-	virtual void onValueChange(IControl&, IValue&) {};
-	virtual void onFocus(IControl&) {};
-	virtual void onKillFocus(IControl&) {};
-	virtual void onDisable(IControl&) {};
-	virtual void onChange(IControl&) {};
-	virtual void onSizeChange(SIZE& size) {};
-	virtual void onNotification(NMHDR& notify) {};
+	HWND handle() override { return _handle; }
+	cWindow* parent() override { return _parent; }
+	UINT_PTR id() override { return _id; }
 
-	cControl* findControlWithId(UINT_PTR iResourceID);
-	cControl* findControlWithHandle(HWND handle);
+	BOOL isHidden() override { return !IsWindowVisible(handle()); }
+	void setHidden(BOOL hidden) override { ShowWindow(handle(), hidden ? SW_HIDE : SW_SHOWNOACTIVATE); }
 
-	HWND handle() { return this->_handle; }
-	cWindow* parent() { return this->_parent; }
+	BOOL isEnabled() override { return IsWindowEnabled(handle()); }
+	void setEnabled(BOOL enabled) override { EnableWindow(handle(), enabled); }
+
+	void close() { DestroyWindow(handle()); }
+
+	void registerControl(cControl* control) { _registredControls.push_back(control); }
+	void unregisterControl(cControl* control) { _registredControls.remove(control); }
+
+	cControl* controlWithId(UINT_PTR iResourceID);
+	cControl* controlWithHandle(HWND handle);
 
 	FRAME bounds();
+
 	SIZE size();
 	void setSize(SIZE& size) { SetWindowPos(handle(), 0, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER); }
 
-	BOOL isHidden();
-	void setHidden(BOOL hidden);
-	
-	void close();
-	void registerControl(cControl* control) { this->append(control); }
+	RECT rect();
+	void setRect(RECT& rect) { SetWindowPos(handle(), nullptr, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOACTIVATE | SWP_NOZORDER); };
 	
 	void setCaption(tstring caption);
 	void setIcon(cIcon icon);
@@ -478,4 +495,5 @@ public:
 
 	LONG setExStyle(LONG style) { return SetWindowLong(handle(), GWL_EXSTYLE, style); }
 	LONG exStyle() { return GetWindowLong(handle(), GWL_EXSTYLE); }
+
 };

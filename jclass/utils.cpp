@@ -1,8 +1,11 @@
+
+
 #include "utils.h"
 
 
 #include <cmath>
 #include <format>
+#include <tchar.h>
 
 
 using namespace std;
@@ -113,3 +116,5 @@ std::string format_datetime(FILETIME* time) {
 
 	return zone_time ? format("{} {}", datebuffer, timebuffer) : format("{} {} UTC", datebuffer, timebuffer);
 }
+
+
