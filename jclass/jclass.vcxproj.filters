@@ -75,6 +75,9 @@
     <ClInclude Include="..\jclasscore\HexFormatter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cFieldsPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wlx.cpp">
@@ -126,6 +129,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\jclasscore\HexFormatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cFieldsPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

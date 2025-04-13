@@ -8,12 +8,12 @@
 #include "JavaClass.hpp"
 
 
-class cMethodsPage : public cWindow
+class cFieldsPage : public cWindow
 {
 private:
 
 	DataSource* _dataSource;
-	cComboBox _methodComboBox;
+	cComboBox _fieldComboBox;
 	cTextField _accFlagsTextField;
 	cTextField _nameIndexTextField;
 	cTextField _descIndexTextField;
@@ -24,26 +24,26 @@ private:
 	void onSelectionChange(IControl& control, ISelectionIndex& index);
 	void onSizeChange(SIZE& size);
 
-	void methodChange(INT index);
-	void updateMethod(java::JavaClass& java, const java::JavaClassMethod* method);
+	void fieldChange(INT index);
+	void updateField(java::JavaClass& java, const java::JavaClassField* field);
 
 public:
 
-	cMethodsPage(const cModule& module, cWindow* parent, DataSource* data_source) :
-		cWindow(module, IDD_METHODS, parent),
+	cFieldsPage(const cModule& module, cWindow* parent, DataSource* data_source) :
+		cWindow(module, IDD_FIELDS, parent),
 		_dataSource(data_source),
-		_methodComboBox(this, IDC_METHODS_COMBO),
-		_accFlagsTextField(this, IDC_METHODS_ACCFLAGS_EDIT),
-		_nameIndexTextField(this, IDC_METHODS_NAMEINDEX_EDIT),
-		_descIndexTextField(this, IDC_METHODS_DESCINDEX_EDIT),
-		_descriptionTextField(this, IDC_METHODS_DESCRIPTION_EDIT),
-		_attributesCountTextField(this, IDC_METHODS_ATTRIBUTESCOUNT_EDIT),
+		_fieldComboBox(this, IDC_FIELDS_COMBO),
+		_accFlagsTextField(this, IDC_FIELDS_ACCFLAGS_EDIT),
+		_nameIndexTextField(this, IDC_FIELDS_NAMEINDEX_EDIT),
+		_descIndexTextField(this, IDC_FIELDS_DESCINDEX_EDIT),
+		_descriptionTextField(this, IDC_FIELDS_DESCRIPTION_EDIT),
+		_attributesCountTextField(this, IDC_FIELDS_ATTRIBUTESCOUNT_EDIT),
 		_attributesPage(module, this, data_source)
 	{
 	}
 
 	void setFont(HFONT font) { _attributesPage.setFont(font); }
-	BOOL empty() { return _methodComboBox.empty(); }
+	BOOL empty() { return _fieldComboBox.empty(); }
 	void parse();
 	void clear();
 };

@@ -22,10 +22,12 @@ cWlxWindow::cWlxWindow(HWND parent) :
 	_propertiesPage(module, this, this),
 	_headerPage(module, this, this),
 	_methodsPage(module, this, this),
+	_fieldsPage(module, this, this),
 	_tabControl(this, IDC_MAIN_TAB)
 {
 	_tabControl.addPage(_T("File Properties"), _propertiesPage);
 	_tabControl.addPage(_T("File Header"), _headerPage);
+	_tabControl.addPage(_T("Fields"), _fieldsPage);
 	_tabControl.addPage(_T("Methods"), _methodsPage);
 	_tabControl.setSelectedIndex(0);
 
@@ -33,6 +35,7 @@ cWlxWindow::cWlxWindow(HWND parent) :
 	_propertiesPage.setFont(_font);
 	_headerPage.setFont(_font);
 	_methodsPage.setFont(_font);
+	_fieldsPage.setFont(_font);
 }
 
 
@@ -77,6 +80,14 @@ void cWlxWindow::onPageChange(INT page) {
 		break;
 
 	case 2:
+
+		if (!_fieldsPage.empty()) {
+			return;
+		}
+		_fieldsPage.parse();
+		break;
+
+	case 3:
 
 		if (!_methodsPage.empty()) {
 			return;
@@ -133,18 +144,28 @@ void cWlxWindow::parse() {
 		_headerPage.parse();
 		_propertiesPage.clear();
 		_methodsPage.clear();
+		_fieldsPage.clear();
 		break;
 
 	case 2:
+		_fieldsPage.parse();
+		_methodsPage.clear();
+		_propertiesPage.clear();
+		_headerPage.clear();
+		break;
+
+	case 3:
 		_methodsPage.parse();
 		_propertiesPage.clear();
 		_headerPage.clear();
+		_fieldsPage.clear();
 		break;
 
 	default:
 		_propertiesPage.parse();
 		_headerPage.clear();
 		_methodsPage.clear();
+		_fieldsPage.clear();
 		break;
 	}
 }

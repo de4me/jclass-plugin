@@ -7,6 +7,7 @@
 #include "cPropertiesPage.h"
 #include "cHeaderPage.h"
 #include "cMethodsPage.h"
+#include "cFieldsPage.h"
 
 
 extern cModule module;
@@ -23,6 +24,7 @@ private:
 	cPropertiesPage _propertiesPage;
 	cHeaderPage _headerPage;
 	cMethodsPage _methodsPage;
+	cFieldsPage _fieldsPage;
 	java::JavaClass _java;
 
 	void onDeinit() override;

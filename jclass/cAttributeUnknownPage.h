@@ -25,8 +25,8 @@ public:
 	cAttributeUnknownPage(const cModule& module, cWindow* parent, DataSource* data_source, HFONT font, const java::JavaClassAttribute* attr) :
 		cWindow(module, IDD_ATTRIBUTE_UNKNOWN, parent),
 		_dataSource(data_source),
-		_nameIndexTextField(this, IDC_ATTRIBUTENAMEINDEX_EDIT),
-		_attrLengthTextField(this, IDC_ATTRIBUTELENGTH_EDIT),
+		_nameIndexTextField(this, IDC_ATTRIBUTE_NAMEINDEX_EDIT),
+		_attrLengthTextField(this, IDC_ATTRIBUTE_LENGTH_EDIT),
 		_attributeTextField(this, IDC_ATTRIBUTE_EDIT)
 	{
 		_attributeTextField.setFont(font);

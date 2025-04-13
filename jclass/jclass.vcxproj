@@ -196,6 +196,7 @@
     <ClInclude Include="..\jclasscore\JavaTypeDescription.hpp" />
     <ClInclude Include="cAttributesPage.h" />
     <ClInclude Include="cAttributeUnknownPage.h" />
+    <ClInclude Include="cFieldsPage.h" />
     <ClInclude Include="cHeaderPage.h" />
     <ClInclude Include="cMethodsPage.h" />
     <ClInclude Include="cPropertiesPage.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="..\jclasscore\JavaTypeDescription.cpp" />
     <ClCompile Include="cAttributesPage.cpp" />
     <ClCompile Include="cAttributeUnknownPage.cpp" />
+    <ClCompile Include="cFieldsPage.cpp" />
     <ClCompile Include="cHeaderPage.cpp" />
     <ClCompile Include="cMethodsPage.cpp" />
     <ClCompile Include="cPropertiesPage.cpp" />
