@@ -90,7 +90,7 @@ const JavaClassHelperType type_helper[] =
 
 struct JavaClassHelperAccessFlag {
     
-    uint64_t flag;
+    ACCFLAG flag;
     const char* name;
 };
 
@@ -114,55 +114,55 @@ const JavaClassHelperAccessFlag access_flag_helper[] =
 
 const JavaClassHelperAccessFlag access_flag_field_helper[] =
 {
-    {ACCFLAG_FIELD_FINAL, "final"},
-    {ACCFLAG_FIELD_STATIC, "static"},
-    {ACCFLAG_FIELD_PUBLIC, "public"},
-    {ACCFLAG_FIELD_PRIVATE, "private"},
-    {ACCFLAG_FIELD_PROTECTED, "protected"},
-    {ACCFLAG_FIELD_VOLATILE, "volatile"},
-    {ACCFLAG_FIELD_TRANSIENT, "transient"},
-    {ACCFLAG_FIELD_SYNTHETIC, "synthetic"},
-    {ACCFLAG_FIELD_ENUM, "enum"},
+    {ACCFLAG_FINAL, "final"},
+    {ACCFLAG_STATIC, "static"},
+    {ACCFLAG_PUBLIC, "public"},
+    {ACCFLAG_PRIVATE, "private"},
+    {ACCFLAG_PROTECTED, "protected"},
+    {ACCFLAG_VOLATILE, "volatile"},
+    {ACCFLAG_TRANSIENT, "transient"},
+    {ACCFLAG_SYNTHETIC, "synthetic"},
+    {ACCFLAG_ENUM, "enum"},
 };
 
 
 const JavaClassHelperAccessFlag access_flag_method_helper[] =
 {
-    {ACCFLAG_METHOD_FINAL, "final"},
-    {ACCFLAG_METHOD_STATIC, "static"},
-    {ACCFLAG_METHOD_PUBLIC, "public"},
-    {ACCFLAG_METHOD_PRIVATE, "private"},
-    {ACCFLAG_METHOD_PROTECTED, "protected"},
-    {ACCFLAG_METHOD_SYNCHRONIZED, "synchronized"},
-    {ACCFLAG_METHOD_BRIDGE, "bridge"},
-    {ACCFLAG_METHOD_VARARGS, "varargs"},
-    {ACCFLAG_METHOD_NATIVE, "native"},
-    {ACCFLAG_METHOD_ABSTRACT, "abstract"},
-    {ACCFLAG_METHOD_STRICT, "strict"},
-    {ACCFLAG_METHOD_SYNTHETIC, "synthetic"},
+    {ACCFLAG_FINAL, "final"},
+    {ACCFLAG_STATIC, "static"},
+    {ACCFLAG_PUBLIC, "public"},
+    {ACCFLAG_PRIVATE, "private"},
+    {ACCFLAG_PROTECTED, "protected"},
+    {ACCFLAG_SYNCHRONIZED, "synchronized"},
+    {ACCFLAG_BRIDGE, "bridge"},
+    {ACCFLAG_VARARGS, "varargs"},
+    {ACCFLAG_NATIVE, "native"},
+    {ACCFLAG_ABSTRACT, "abstract"},
+    {ACCFLAG_STRICT, "strict"},
+    {ACCFLAG_SYNTHETIC, "synthetic"},
 };
 
 
 const JavaClassHelperAccessFlag access_flag_innerclass_helper[] =
 {
-    {ACCFLAG_INNERCLASS_FINAL, "final"},
-    {ACCFLAG_INNERCLASS_STATIC, "static"},
-    {ACCFLAG_INNERCLASS_PUBLIC, "public"},
-    {ACCFLAG_INNERCLASS_PRIVATE, "private"},
-    {ACCFLAG_INNERCLASS_PROTECTED, "protected"},
-    {ACCFLAG_INNERCLASS_INTERFACE, "interface"},
-    {ACCFLAG_INNERCLASS_ABSTRACT, "abstract"},
-    {ACCFLAG_INNERCLASS_SYNTHETIC, "synthetic"},
-    {ACCFLAG_INNERCLASS_ANNOTATION, "annotation"},
-    {ACCFLAG_INNERCLASS_ENUM, "enum"},
+    {ACCFLAG_FINAL, "final"},
+    {ACCFLAG_STATIC, "static"},
+    {ACCFLAG_PUBLIC, "public"},
+    {ACCFLAG_PRIVATE, "private"},
+    {ACCFLAG_PROTECTED, "protected"},
+    {ACCFLAG_INTERFACE, "interface"},
+    {ACCFLAG_ABSTRACT, "abstract"},
+    {ACCFLAG_SYNTHETIC, "synthetic"},
+    {ACCFLAG_ANNOTATION, "annotation"},
+    {ACCFLAG_ENUM, "enum"},
 };
 
 
 const JavaClassHelperAccessFlag access_flag_methodparameter_helper[] =
 {
-    {ACCFLAG_METHODPARAMETER_FINAL, "final"},
-    {ACCFLAG_METHODPARAMETER_SYNTHETIC, "synthetic"},
-    {ACCFLAG_METHODPARAMETER_MANDATED, "mandated"},
+    {ACCFLAG_FINAL, "final"},
+    {ACCFLAG_SYNTHETIC, "synthetic"},
+    {ACCFLAG_MANDATED, "mandated"},
 };
 
 
@@ -201,6 +201,7 @@ const JavaClassHelperVersion version_helper[] =
 
 
 vector<string> JavaHelperGetAccessFlags(const JavaClassHelperAccessFlag allflags[], size_t count, uint16_t flags) {
+    
     vector<string> array;
     uint16_t unknown_flags = flags;
     for(size_t i = 0; i < count; i++) {
@@ -210,7 +211,7 @@ vector<string> JavaHelperGetAccessFlags(const JavaClassHelperAccessFlag allflags
         }
     }
     if(unknown_flags != 0) {
-        auto unknown_string = format("ACC(0x{:x})", unknown_flags);
+        auto unknown_string = format("ACC_{:0>4x}", unknown_flags);
         array.push_back(unknown_string);
     }
     return array;
@@ -221,7 +222,7 @@ const string JavaHelperJoinWithSeparator(const vector<string>& array, const stri
     
     ostringstream buffer;
     bool add_separator = false;
-    for(auto item: array) {
+    for(auto& item: array) {
         if (add_separator) {
             buffer << separator;
         }
@@ -234,7 +235,7 @@ const string JavaHelperJoinWithSeparator(const vector<string>& array, const stri
 
 bool JavaHelperTypeTagValid(TYPETAG tag) {
     
-    for(auto item: type_helper) {
+    for(auto& item: type_helper) {
         if(item.tag == tag) {
             return true;
         }
@@ -246,9 +247,9 @@ bool JavaHelperTypeTagValid(TYPETAG tag) {
 const string JavaHelperVersion(const JavaClassVersion& version, bool java_se) {
     
     if (!java_se) {
-        return format("{:2}.{:0<2}", version.major_version, version.minor_version);
+        return format("{:2}.{:0>2}", version.major_version, version.minor_version);
     }
-    for(auto item: version_helper) {
+    for(auto& item: version_helper) {
         if (item.major_version == version.major_version) {
             return format("{} ({})", item.java_se, item.date);
         }
@@ -264,28 +265,28 @@ const string JavaHelperAccessFlags(ACCFLAG flags, const string& separator) {
 }
 
 
-const string JavaHelperFieldAccessFlags(ACCFLAG_FIELD flags, const string& separator) {
+const string JavaHelperFieldAccessFlags(ACCFLAG flags, const string& separator) {
     
     vector<string> array = JavaHelperGetAccessFlags(access_flag_field_helper, sizeof(access_flag_field_helper) / sizeof(access_flag_field_helper[0]), flags);
     return JavaHelperJoinWithSeparator(array, separator);
 }
 
 
-const string JavaHelperMethodAccessFlags(ACCFLAG_METHOD flags, const string& separator) {
+const string JavaHelperMethodAccessFlags(ACCFLAG flags, const string& separator) {
     
     vector<string> array = JavaHelperGetAccessFlags(access_flag_method_helper, sizeof(access_flag_method_helper) / sizeof(access_flag_method_helper[0]), flags);
     return JavaHelperJoinWithSeparator(array, separator);
 }
 
 
-const string JavaHelperInnerClassAccessFlags(ACCFLAG_INNERCLASS flags, const string& separator) {
+const string JavaHelperInnerClassAccessFlags(ACCFLAG flags, const string& separator) {
     
     vector<string> array = JavaHelperGetAccessFlags(access_flag_innerclass_helper, sizeof(access_flag_innerclass_helper) / sizeof(access_flag_innerclass_helper[0]), flags);
     return JavaHelperJoinWithSeparator(array, separator);
 }
 
 
-const string JavaHelperMethodParameterAccessFlags(ACCFLAG_METHODPARAMETER flags, const string& separator) {
+const string JavaHelperMethodParameterAccessFlags(ACCFLAG flags, const string& separator) {
     
     vector<string> array = JavaHelperGetAccessFlags(access_flag_methodparameter_helper, sizeof(access_flag_methodparameter_helper) / sizeof(access_flag_methodparameter_helper[0]), flags);
     return JavaHelperJoinWithSeparator(array, separator);
@@ -294,7 +295,7 @@ const string JavaHelperMethodParameterAccessFlags(ACCFLAG_METHODPARAMETER flags,
 
 const string JavaHelperTypeTagName(TYPETAG tag) {
     
-    for(auto item: type_helper) {
+    for(auto& item: type_helper) {
         if(item.tag == tag) {
             return item.desc;
         }

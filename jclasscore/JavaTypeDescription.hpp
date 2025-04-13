@@ -11,7 +11,6 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 
 
 using namespace std;
@@ -38,7 +37,6 @@ public:
     
     bool isMethod();
     const string str(const string& separator = " ");
-    
 };
 
 

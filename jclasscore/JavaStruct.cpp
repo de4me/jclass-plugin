@@ -42,7 +42,7 @@ size_t JavaClassMethod::sizeOfStruct() const {
     auto iter = attributeIterator();
     auto begin_ptr = reinterpret_cast<const char*>(iter.cbegin());
     auto end_ptr = reinterpret_cast<const char*>(iter.cend());
-    return sizeof(JavaClassField) + (end_ptr - begin_ptr);
+    return sizeof(JavaClassMethod) + (end_ptr - begin_ptr);
 }
 
 

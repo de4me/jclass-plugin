@@ -66,7 +66,7 @@ ATTRTAG JavaClass::attrTagAtIndex(uint16_t index) const {
     }
     auto length = pool->utf8_info.length();
     auto name = pool->utf8_info.bytes;
-    for(auto item: attribute_names) {
+    for(auto& item: attribute_names) {
         if (strncmp(name, item.name, length) != 0) {
             continue;
         }

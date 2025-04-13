@@ -1,5 +1,5 @@
 //
-//  JavaDescription.cpp
+//  JavaTypeDescription.cpp
 //  jclass
 //
 //  Created by DE4ME on 08.04.2025.

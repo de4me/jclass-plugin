@@ -32,10 +32,10 @@ const string JavaHelperTypeTagName(TYPETAG tag);
 const string JavaHelperVersion(const JavaClassVersion& version, bool java_se = false);
 
 const string JavaHelperAccessFlags(ACCFLAG flags, const string& separator = " ");
-const string JavaHelperFieldAccessFlags(ACCFLAG_FIELD flags, const string& separator = " ");
-const string JavaHelperMethodAccessFlags(ACCFLAG_METHOD flags, const string& separator = " ");
-const string JavaHelperInnerClassAccessFlags(ACCFLAG_INNERCLASS flags, const string& separator = " ");
-const string JavaHelperMethodParameterAccessFlags(ACCFLAG_METHODPARAMETER flags, const string& separator = " ");
+const string JavaHelperFieldAccessFlags(ACCFLAG flags, const string& separator = " ");
+const string JavaHelperMethodAccessFlags(ACCFLAG flags, const string& separator = " ");
+const string JavaHelperInnerClassAccessFlags(ACCFLAG flags, const string& separator = " ");
+const string JavaHelperMethodParameterAccessFlags(ACCFLAG flags, const string& separator = " ");
 
 const string JavaHelperNameAndType(const JavaClass& java, const JavaClassPool* pool);
 const string JavaHelperMethodNameAndType(const JavaClass& java, const JavaClassPool* pool);

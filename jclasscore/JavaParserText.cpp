@@ -274,7 +274,7 @@ void JavaParserText::parseAttr(JavaClass &java, const JavaClassAttribute *attr, 
         case ATTRTAG_INNERCLASSES:
         {
             auto iter = attr->innerclasses_info.infoIterator();
-            for(auto info = iter.cbegin(); info != nullptr; info = iter.next()) {
+            for(auto info = iter.current(); info != nullptr; info = iter.next()) {
                 auto name = JavaHelperGetInnerClassName(java, info);
                 _innerClasses.push_back(name);
             }
@@ -302,7 +302,7 @@ void JavaParserText::parseEnd(JavaClass &java) {
     if(!_innerClasses.empty()) {
         _buffer << "\r\nInner Classes\r\n\r\n";
         int index = 0;
-        for(auto item: _innerClasses) {
+        for(auto& item: _innerClasses) {
             _buffer << format("{:5} {}\r\n", index, item);
             index++;
         }
