@@ -29,13 +29,13 @@ void HexFormatter::format(const uint8_t* buffer, size_t length) {
     
     for(size_t i = 0; i < length; i++) {
         
-        if( (i % lineLength) == 0) {
+        if( (i % bytesPerLine) == 0) {
             string offset_string = std::vformat(offset_format, make_format_args(offsetPrefix, i, offsetSuffix));
             *this << offset_string;
         }
         
         auto inext = i + 1;
-        if ( (inext % lineLength) == 0 || (inext >= length) ) {
+        if ( (inext % bytesPerLine) == 0 || (inext >= length) ) {
             auto byte_string = std::format("{}{:0>2x}{}\r\n", bytePrefix, buffer[i], byteSuffix);
             *this << byte_string;
         } else {

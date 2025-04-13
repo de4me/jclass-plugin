@@ -20,7 +20,7 @@ class HexFormatter: public ostringstream {
     
 public:
     
-    int lineLength;
+    int bytesPerLine;
     
     string offsetPrefix;
     string offsetSuffix;
@@ -28,13 +28,13 @@ public:
     string byteSeparator;
     string byteSuffix;
     
-    HexFormatter(int line_length) :
+    HexFormatter(int bytes_per_line) :
     offsetPrefix(""),
     offsetSuffix(": "),
     bytePrefix(""),
     byteSeparator(""),
     byteSuffix(""),
-    lineLength(line_length)
+    bytesPerLine(bytes_per_line)
     {
         
     }
