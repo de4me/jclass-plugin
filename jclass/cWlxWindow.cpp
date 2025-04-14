@@ -21,6 +21,7 @@ cWlxWindow::cWlxWindow(HWND parent) :
 	cWindow(module, IDD_MAIN, parent),
 	_propertiesPage(module, this, this),
 	_headerPage(module, this, this),
+	_poolPage(module, this, this),
 	_methodsPage(module, this, this),
 	_fieldsPage(module, this, this),
 	_attributesPage(module, this, this),
@@ -28,6 +29,7 @@ cWlxWindow::cWlxWindow(HWND parent) :
 {
 	_tabControl.addPage(_T("File Properties"), _propertiesPage);
 	_tabControl.addPage(_T("File Header"), _headerPage);
+	_tabControl.addPage(_T("Pool"), _poolPage),
 	_tabControl.addPage(_T("Fields"), _fieldsPage);
 	_tabControl.addPage(_T("Methods"), _methodsPage);
 	_tabControl.addPage(_T("Attributes"), _attributesPage);
@@ -36,6 +38,7 @@ cWlxWindow::cWlxWindow(HWND parent) :
 	_font = CreateFont(14, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, _T("Courier New"));
 	_propertiesPage.setFont(_font);
 	_headerPage.setFont(_font);
+	_poolPage.setFont(_font);
 	_methodsPage.setFont(_font);
 	_fieldsPage.setFont(_font);
 	_attributesPage.setFont(_font);
@@ -84,13 +87,21 @@ void cWlxWindow::onPageChange(INT page) {
 
 	case 2:
 
+		if (!_poolPage.empty()) {
+			return;
+		}
+		_poolPage.parse();
+		break;
+
+	case 3:
+
 		if (!_fieldsPage.empty()) {
 			return;
 		}
 		_fieldsPage.parse();
 		break;
 
-	case 3:
+	case 4:
 
 		if (!_methodsPage.empty()) {
 			return;
@@ -98,7 +109,7 @@ void cWlxWindow::onPageChange(INT page) {
 		_methodsPage.parse();
 		break;
 
-	case 4:
+	case 5:
 
 		if (!_attributesPage.empty()) {
 			return;
@@ -157,10 +168,12 @@ void cWlxWindow::parse() {
 		_methodsPage.clear();
 		_fieldsPage.clear();
 		_attributesPage.clear();
+		_poolPage.clear();
 		break;
 
 	case 2:
-		_fieldsPage.parse();
+		_poolPage.parse();
+		_fieldsPage.clear();
 		_methodsPage.clear();
 		_propertiesPage.clear();
 		_headerPage.clear();
@@ -168,19 +181,30 @@ void cWlxWindow::parse() {
 		break;
 
 	case 3:
+		_fieldsPage.parse();
+		_methodsPage.clear();
+		_propertiesPage.clear();
+		_headerPage.clear();
+		_attributesPage.clear();
+		_poolPage.clear();
+		break;
+
+	case 4:
 		_methodsPage.parse();
 		_propertiesPage.clear();
 		_headerPage.clear();
 		_fieldsPage.clear();
 		_attributesPage.clear();
+		_poolPage.clear();
 		break;
 
-	case 4:
+	case 5:
 		_attributesPage.parse(_java.attrIterator());
 		_propertiesPage.clear();
 		_headerPage.clear();
 		_methodsPage.clear();
 		_fieldsPage.clear();
+		_poolPage.clear();
 		break;
 
 	default:
@@ -189,6 +213,7 @@ void cWlxWindow::parse() {
 		_methodsPage.clear();
 		_fieldsPage.clear();
 		_attributesPage.clear();
+		_poolPage.clear();
 		break;
 	}
 }

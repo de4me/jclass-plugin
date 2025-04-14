@@ -199,6 +199,8 @@
     <ClInclude Include="cFieldsPage.h" />
     <ClInclude Include="cHeaderPage.h" />
     <ClInclude Include="cMethodsPage.h" />
+    <ClInclude Include="cPoolPage.h" />
+    <ClInclude Include="cPoolUnknownPage.h" />
     <ClInclude Include="cPropertiesPage.h" />
     <ClInclude Include="cWindow.h" />
     <ClInclude Include="cWlxWindow.h" />
@@ -221,6 +223,8 @@
     <ClCompile Include="cFieldsPage.cpp" />
     <ClCompile Include="cHeaderPage.cpp" />
     <ClCompile Include="cMethodsPage.cpp" />
+    <ClCompile Include="cPoolPage.cpp" />
+    <ClCompile Include="cPoolUnknownPage.cpp" />
     <ClCompile Include="cPropertiesPage.cpp" />
     <ClCompile Include="cWindow.cpp" />
     <ClCompile Include="cWlxWindow.cpp" />

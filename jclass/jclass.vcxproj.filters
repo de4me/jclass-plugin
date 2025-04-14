@@ -78,6 +78,12 @@
     <ClInclude Include="cFieldsPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cPoolPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cPoolUnknownPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wlx.cpp">
@@ -132,6 +138,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cFieldsPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cPoolPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cPoolUnknownPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

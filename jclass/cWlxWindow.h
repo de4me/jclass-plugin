@@ -9,6 +9,7 @@
 #include "cMethodsPage.h"
 #include "cFieldsPage.h"
 #include "cAttributesPage.h"
+#include "cPoolPage.h"
 
 
 extern cModule module;
@@ -24,6 +25,7 @@ private:
 	cTabControl _tabControl;
 	cPropertiesPage _propertiesPage;
 	cHeaderPage _headerPage;
+	cPoolPage _poolPage;
 	cMethodsPage _methodsPage;
 	cFieldsPage _fieldsPage;
 	cAttributesPage _attributesPage;

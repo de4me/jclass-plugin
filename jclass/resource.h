@@ -9,6 +9,9 @@
 #define IDD_METHODS                     107
 #define IDD_ATTRIBUTES                  109
 #define IDD_ATTRIBUTE_UNKNOWN           110
+#define IDD_POOL                        111
+#define IDD_TEMPLATE                    112
+#define IDD_POOL_UNKNOWN                113
 #define IDC_MAIN_TAB                    1001
 #define IDC_PROPERTIES_EDIT             1003
 #define IDC_HEADER_EDIT                 1004
@@ -21,21 +24,27 @@
 #define IDC_METHODS_DESCRIPTION_EDIT    1011
 #define IDC_METHODS_ATTRIBUTESCOUNT_EDIT 1013
 #define IDC_ATTRIBUTE_EDIT              1014
-#define IDC_ATTRIBUTE_LENGTH_EDIT        1015
-#define IDC_ATTRIBUTE_NAMEINDEX_EDIT     1016
+#define IDC_ATTRIBUTE_LENGTH_EDIT       1015
+#define IDC_ATTRIBUTE_NAMEINDEX_EDIT    1016
 #define IDC_FIELDS_COMBO                1017
 #define IDC_FIELDS_ACCFLAGS_EDIT        1018
 #define IDC_FIELDS_NAMEINDEX_EDIT       1019
 #define IDC_FIELDS_DESCINDEX_EDIT       1020
 #define IDC_FIELDS_DESCRIPTION_EDIT     1021
 #define IDC_FIELDS_ATTRIBUTESCOUNT_EDIT 1022
+#define IDC_POOL_TAG_EDIT               1023
+#define IDC_POOL_COMBO                  1024
+#define IDC_POOL_TAB                    1025
+#define IDC_POOL_UNKNOWN_LENGTH_EDIT    1026
+#define IDC_POOL_UNKNOWN_EDIT           1027
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        111
+#define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1023
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
