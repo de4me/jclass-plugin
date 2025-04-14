@@ -32,6 +32,10 @@ public:
 
 	}
 
+	~cAttributesPage() {
+		clear();
+	}
+
 	void setFont(HFONT font) { _font = font; }
 	void parse(java::AttributeIterator attributes);
 	void clear();
