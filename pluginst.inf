@@ -1,7 +1,0 @@
-[plugininstall]
-description=JClass plugin allows Total Commander to view java .class files.
-descriptionRus=JClass плагин для Total Commander позволяет просматривать содержимое файлов java .class.
-type=wlx
-file=jclass.wlx
-defaultdir=jclass
-version=0.7.6

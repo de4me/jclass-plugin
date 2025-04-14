@@ -1,6 +1,8 @@
 
 .DS_Store
 
+/pluginst.inf
+
 /.vs/
 /bin/
 /obj/
